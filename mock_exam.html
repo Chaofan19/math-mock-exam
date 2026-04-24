@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Mid-Term Mock Exam (SAQ)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px 32px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: none;
+            max-width: 520px;
+            width: 100%;
+            padding: 18px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 640px;
+        }
+
+        .quiz-header {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .quiz-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #232323;
+            margin-bottom: 4px;
+        }
+
+        .quiz-subtitle {
+            font-size: 13px;
+            color: #9d9d9d;
+        }
+
+        .progress-text {
+            text-align: left;
+            font-size: 13px;
+            color: #9d9d9d;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2a2a2a;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .options::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .options::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+
+        .options::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border-radius: 3px;
+        }
+
+        .options::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f8f8;
+        }
+
+        .option:hover:not(.selected):not(.disabled) {
+            border-color: #e6e6e6;
+            background: #f6f6f6;
+        }
+
+        .option.selected {
+            border-color: #d0d0d0;
+            background: #dedede;
+        }
+
+        .option.correct,
+        .option.wrong {
+            border-color: #f0f0f0;
+            background: #f8f8f8;
+        }
+
+        .option.disabled {
+            cursor: default;
+        }
+
+        .option-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 10px;
+            flex-shrink: 0;
+            color: #9d9d9d;
+            width: 22px;
+        }
+
+        .option.selected .option-label {
+            color: #3a3a3a;
+        }
+
+        .option.disabled .option-text {
+            color: #bdbdbd;
+        }
+
+        .option.disabled .option-label {
+            color: #bdbdbd;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 15px;
+            color: #3a3a3a;
+        }
+
+
+        .feedback-card {
+            padding: 14px 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .feedback-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback-card.correct {
+            background: #bfeacb;
+        }
+
+        .feedback-card.wrong {
+            background: #fff7f7;
+        }
+
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .feedback-header.correct {
+            color: #697b6e;
+        }
+
+        .feedback-header.wrong {
+            color: #a42d22;
+        }
+
+        .feedback-icon {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .feedback-answer {
+            font-size: 15px;
+            color: #2a2a2a;
+        }
+
+        .feedback-text {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .feedback-card.correct .feedback-text {
+            color: #444443;
+        }
+
+        .feedback-card.wrong .feedback-text {
+            color: #2e2e2f;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+            min-height: 52px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #6b7280;
+            border: 1px solid #e2e2e2;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e5e5e5;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #424cf7;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(66, 76, 247, 0.25);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+
+        .completion-container {
+            text-align: center;
+            display: none;
+        }
+
+        .completion-container.show {
+            display: block;
+        }
+
+        .completion-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .completion-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .completion-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .stat-card.score {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card.score .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.score .stat-value {
+            color: white;
+        }
+
+        .completion-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .weak-areas-section,
+        .wrong-answers-section {
+            margin-bottom: 24px;
+            text-align: left;
+            display: none;
+        }
+
+        .weak-areas-section.show,
+        .wrong-answers-section.show {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .weak-area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .weak-area-card {
+            background: #fff3f3;
+            border: 1px solid #ffd3d3;
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+
+        .weak-area-name {
+            font-size: 13px;
+            color: #7a2020;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .weak-area-count {
+            font-size: 18px;
+            font-weight: 600;
+            color: #c12d1f;
+        }
+
+        .wrong-answer-card {
+            background: #fff7f7;
+            border: 1px solid #fad4d4;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+
+        .wrong-answer-topic {
+            display: inline-block;
+            font-size: 11px;
+            background: #ffe4e4;
+            color: #7a2020;
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .wrong-answer-question {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2a2a2a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .wrong-answer-row {
+            font-size: 13px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .wrong-answer-label {
+            font-weight: 600;
+            color: #555;
+            margin-right: 6px;
+        }
+
+        .wrong-answer-user {
+            color: #a42d22;
+        }
+
+        .wrong-answer-correct {
+            color: #1f7a3a;
+        }
+
+        .wrong-answer-explanation {
+            font-size: 12px;
+            color: #4a4a4a;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f3dcdc;
+            line-height: 1.5;
+        }
+
+        .hint-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #4e4e4e;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .hint-toggle .chevron {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .hint-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .hint-panel {
+            padding: 12px 14px;
+            background: #ebecf8;
+            border-radius: 12px;
+            display: none;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .hint-panel.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hint-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #4e4e4e;
+            margin-bottom: 6px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #474749;
+            line-height: 1.5;
+        }
+
+        .hint-slot {
+            min-height: 72px;
+        }
+
+        .quiz-footer {
+            margin-top: auto;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <div class="quiz-title">Math Mid-Term Mock Exam (SAQ)</div>
+            <div class="quiz-subtitle">Based on 1 source</div>
+        </div>
+
+        <div id="quiz-content">
+            <!-- Questions will be rendered here -->
+        </div>
+
+        <div id="completion-screen" class="completion-container">
+            <div class="completion-icon">🎉</div>
+            <div class="completion-title">You did it! Quiz Complete.</div>
+            <div class="completion-subtitle">Here's how you performed</div>
+
+            <div class="stats-grid">
+                <div class="stat-card score">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="score-value">0/20</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value" id="accuracy-value">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Right</div>
+                    <div class="stat-value" id="right-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Wrong</div>
+                    <div class="stat-value" id="wrong-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Skipped</div>
+                    <div class="stat-value" id="skipped-value">0</div>
+                </div>
+            </div>
+
+            <div id="weak-areas-section" class="weak-areas-section">
+                <div class="section-title">Your Weak Areas</div>
+                <div class="section-subtitle">Grouped by topic — focus your revision here</div>
+                <div id="weak-areas-grid" class="weak-area-grid"></div>
+            </div>
+
+            <div id="wrong-answers-section" class="wrong-answers-section">
+                <div class="section-title">Wrong Answers Review</div>
+                <div id="wrong-answers-list"></div>
+            </div>
+
+            <div class="completion-buttons">
+                <button class="btn btn-secondary" onclick="reviewQuiz()">Review Quiz</button>
+                <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/contrib/auto-render.min.js"></script>
+    <script>
+        const questions = [{"question": "Section A Q1 — Variation: $y$ varies directly as $x^2$. When $x = 3$, $y = 18$. Find $y$ when $x = 5$.", "options": ["30", "45", "50", "75"], "correctIndex": 2, "hint": "Write $y = kx^2$, solve for $k$, then substitute.", "correctExplanation": "$y = kx^2$. From $x=3, y=18$: $18 = 9k \\Rightarrow k = 2$. So $y = 2(5)^2 = 50$.", "wrongExplanation": "Use $y = kx^2$. Find $k=2$ from the given values, then $y = 2(25) = 50$."}, {"question": "Section A Q2 — Straight line: Find the equation of the line passing through $(2, 3)$ and $(4, 7)$.", "options": ["$y = 2x - 1$", "$y = 2x + 1$", "$y = x + 1$", "$y = \\tfrac{1}{2}x + 2$"], "correctIndex": 0, "hint": "Gradient $m = \\dfrac{y_2 - y_1}{x_2 - x_1}$, then use point-slope form.", "correctExplanation": "$m = \\dfrac{7-3}{4-2} = 2$. Using $(2,3)$: $y - 3 = 2(x - 2) \\Rightarrow y = 2x - 1$.", "wrongExplanation": "Gradient is $2$; substitute $(2,3)$ into $y - y_1 = m(x - x_1)$ to get $y = 2x - 1$."}, {"question": "Section A Q3 — Quadratic function: Find the minimum value of $f(x) = x^2 - 6x + 11$.", "options": ["$-11$", "$2$", "$3$", "$11$"], "correctIndex": 1, "hint": "Complete the square: $(x - h)^2 + k$; the minimum is $k$.", "correctExplanation": "$x^2 - 6x + 11 = (x-3)^2 + 2$. Minimum value is $2$ at $x = 3$.", "wrongExplanation": "Complete the square to get $(x-3)^2 + 2$; the minimum value is $2$."}, {"question": "Section A Q4 — Locus: Find the locus of point $P$ that is equidistant from $A(2, 0)$ and $B(6, 0)$.", "options": ["$x = 3$", "$x = 4$", "$y = 4$", "$y = x$"], "correctIndex": 1, "hint": "Equidistant from two points = perpendicular bisector of the segment.", "correctExplanation": "Midpoint of $AB$ is $(4, 0)$ and $AB$ is horizontal, so the perpendicular bisector is the vertical line $x = 4$.", "wrongExplanation": "The locus is the perpendicular bisector of $AB$, which passes through the midpoint $(4,0)$ vertically: $x = 4$."}, {"question": "Section A Q5 — Parameter: Given $x = t - 3$ and $y = 2t + 1$, express $y$ in terms of $x$.", "options": ["$y = 2x - 5$", "$y = 2x + 7$", "$y = 2x + 1$", "$y = x + 4$"], "correctIndex": 1, "hint": "Make $t$ the subject from the $x$ equation, then substitute into $y$.", "correctExplanation": "$t = x + 3$, so $y = 2(x+3) + 1 = 2x + 7$.", "wrongExplanation": "Rearrange $x = t - 3$ to $t = x + 3$, then substitute into $y = 2t + 1$ to get $y = 2x + 7$."}, {"question": "Section A Q6 — Quadratic sketch: The curve $y = (x - 2)(x + 3)$ crosses the $y$-axis at which point?", "options": ["$(0, -6)$", "$(0, 6)$", "$(0, -1)$", "$(0, 5)$"], "correctIndex": 0, "hint": "The $y$-intercept is found by setting $x = 0$.", "correctExplanation": "At $x = 0$: $y = (-2)(3) = -6$. So the $y$-intercept is $(0, -6)$.", "wrongExplanation": "Substitute $x = 0$: $y = (0-2)(0+3) = -6$. Intercept is $(0, -6)$."}, {"question": "Section A Q7 — Logical reasoning: What is the converse of the statement 'If it rains, then the ground is wet'?", "options": ["If it does not rain, then the ground is not wet.", "If the ground is wet, then it rains.", "If the ground is not wet, then it does not rain.", "It rains and the ground is wet."], "correctIndex": 1, "hint": "Converse swaps the hypothesis (if-part) and conclusion (then-part).", "correctExplanation": "Converse of 'If $p$, then $q$' is 'If $q$, then $p$'. So: 'If the ground is wet, then it rains.'", "wrongExplanation": "The converse swaps the two parts, giving 'If the ground is wet, then it rains.' (Negating both parts gives the inverse; doing both gives the contrapositive.)"}, {"question": "Section A Q8 — Number bases: Convert $101101_2$ to base $10$.", "options": ["$37$", "$41$", "$45$", "$53$"], "correctIndex": 2, "hint": "Each digit contributes $d \\times 2^{position}$, starting from position $0$ on the right.", "correctExplanation": "$1\\cdot32 + 0\\cdot16 + 1\\cdot8 + 1\\cdot4 + 0\\cdot2 + 1\\cdot1 = 32+8+4+1 = 45$.", "wrongExplanation": "Sum the place values where digits are $1$: $32 + 8 + 4 + 1 = 45$."}, {"question": "Section A Q9 — Networking: How many edges does a complete graph on $5$ vertices ($K_5$) have?", "options": ["$5$", "$8$", "$10$", "$20$"], "correctIndex": 2, "hint": "A complete graph on $n$ vertices has $\\dfrac{n(n-1)}{2}$ edges.", "correctExplanation": "$\\dfrac{5 \\times 4}{2} = 10$ edges.", "wrongExplanation": "Use the formula $\\dfrac{n(n-1)}{2}$ with $n=5$: $\\dfrac{5\\cdot4}{2} = 10$."}, {"question": "Section A Q10 — Standard deviation: Find the standard deviation of the data set $\\{2, 4, 6, 8, 10\\}$.", "options": ["$2$", "$2\\sqrt{2}$", "$4$", "$\\sqrt{10}$"], "correctIndex": 1, "hint": "Find the mean, then use $\\sigma = \\sqrt{\\dfrac{\\sum (x - \\bar{x})^2}{n}}$.", "correctExplanation": "Mean $= 6$. Squared deviations: $16, 4, 0, 4, 16$. Sum $= 40$, variance $= 40/5 = 8$, so $\\sigma = \\sqrt{8} = 2\\sqrt{2}$.", "wrongExplanation": "Mean is $6$; sum of squared deviations is $40$; variance $= 8$; $\\sigma = 2\\sqrt{2} \\approx 2.83$."}, {"question": "Section B Q1 — Linear inequalities: The region $R$ is defined by $y \\geq 0$, $x \\leq 5$, and $y \\leq x$. Which point lies inside $R$?", "options": ["$(-1, 0)$", "$(6, 1)$", "$(3, 2)$", "$(2, 3)$"], "correctIndex": 2, "hint": "Check each condition for every option; all three must hold.", "correctExplanation": "At $(3,2)$: $y=2 \\geq 0$ ✓, $x=3 \\leq 5$ ✓, $y=2 \\leq x=3$ ✓. All three hold.", "wrongExplanation": "Only $(3,2)$ satisfies all three inequalities. $(2,3)$ fails $y \\leq x$; $(6,1)$ fails $x \\leq 5$; $(-1,0)$ fails $y \\leq x$."}, {"question": "Section B Q2 — Matrix inverse: Find the inverse of $\\begin{pmatrix} 2 & 1 \\\\ 3 & 2 \\end{pmatrix}$.", "options": ["$\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}$", "$\\begin{pmatrix} 2 & 1 \\\\ 3 & 2 \\end{pmatrix}$", "$\\begin{pmatrix} -2 & 1 \\\\ 3 & -2 \\end{pmatrix}$", "$\\begin{pmatrix} 1 & -1 \\\\ -3 & 1 \\end{pmatrix}$"], "correctIndex": 0, "hint": "For $\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$, inverse is $\\dfrac{1}{ad-bc}\\begin{pmatrix} d & -b \\\\ -c & a \\end{pmatrix}$.", "correctExplanation": "$\\det = 2\\cdot2 - 1\\cdot3 = 1$. Inverse $= \\dfrac{1}{1}\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix} = \\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}$.", "wrongExplanation": "The determinant is $1$; swap the diagonal and negate the off-diagonal entries: $\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}$."}, {"question": "Section B Q3 — Simultaneous (matrix method): Solve $2x + y = 7$ and $x + y = 4$.", "options": ["$x=2, y=3$", "$x=3, y=1$", "$x=1, y=3$", "$x=4, y=-1$"], "correctIndex": 1, "hint": "Write as $A\\mathbf{x} = \\mathbf{b}$, then $\\mathbf{x} = A^{-1}\\mathbf{b}$ (or subtract equations).", "correctExplanation": "Subtracting: $(2x+y)-(x+y) = 7-4 \\Rightarrow x = 3$. Then $y = 4 - 3 = 1$.", "wrongExplanation": "$A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 1 \\end{pmatrix}$, $\\det = 1$, $A^{-1} = \\begin{pmatrix} 1 & -1 \\\\ -1 & 2 \\end{pmatrix}$. Multiplying by $\\begin{pmatrix} 7 \\\\ 4 \\end{pmatrix}$ gives $x=3, y=1$."}, {"question": "Section B Q4 — Insurance: The annual premium rate for fire insurance is RM0.40 per RM100 of the insured value. Find the annual premium for a house insured for RM150,000.", "options": ["RM400", "RM600", "RM750", "RM1,500"], "correctIndex": 1, "hint": "Premium $= \\dfrac{\\text{insured value}}{100} \\times \\text{rate per RM100}$.", "correctExplanation": "$\\dfrac{150{,}000}{100} \\times 0.40 = 1500 \\times 0.40 = $ RM600.", "wrongExplanation": "There are $1500$ 'lots' of RM100 in RM150,000; multiply by RM0.40 to get RM600."}, {"question": "Section B Q5 — Plan & elevation: A cuboid measures $4\\text{ cm} \\times 3\\text{ cm} \\times 2\\text{ cm}$ (length × width × height). What is the area of the front elevation (the $4\\text{ cm} \\times 2\\text{ cm}$ face)?", "options": ["$6$ cm$^2$", "$8$ cm$^2$", "$12$ cm$^2$", "$24$ cm$^2$"], "correctIndex": 1, "hint": "Front elevation shows length × height.", "correctExplanation": "Front elevation area $= 4 \\times 2 = 8$ cm$^2$.", "wrongExplanation": "The front elevation is the length-by-height rectangle: $4 \\times 2 = 8$ cm$^2$."}, {"question": "Section B Q6 — Quadratic graph: Find the roots of $y = x^2 - 5x + 6$.", "options": ["$x = -2, -3$", "$x = 2, 3$", "$x = 1, 6$", "$x = -1, -6$"], "correctIndex": 1, "hint": "Factorise $x^2 - 5x + 6$ into two brackets.", "correctExplanation": "$x^2 - 5x + 6 = (x-2)(x-3) = 0 \\Rightarrow x = 2$ or $x = 3$.", "wrongExplanation": "Factor as $(x-2)(x-3)$; setting each bracket to zero gives roots $x = 2$ and $x = 3$."}, {"question": "Section B Q7 — Probability: A bag contains $3$ red and $5$ blue marbles. One marble is drawn at random. Find $P(\\text{red})$.", "options": ["$\\tfrac{3}{5}$", "$\\tfrac{3}{8}$", "$\\tfrac{5}{8}$", "$\\tfrac{1}{3}$"], "correctIndex": 1, "hint": "$P(\\text{event}) = \\dfrac{\\text{favourable outcomes}}{\\text{total outcomes}}$.", "correctExplanation": "Total marbles $= 3 + 5 = 8$. $P(\\text{red}) = \\tfrac{3}{8}$.", "wrongExplanation": "There are $8$ marbles total and $3$ are red, so $P(\\text{red}) = \\tfrac{3}{8}$."}, {"question": "Section B Q8 — Variation: $z$ varies inversely as $w$. When $w = 4$, $z = 6$. Find $z$ when $w = 8$.", "options": ["$3$", "$12$", "$2$", "$24$"], "correctIndex": 0, "hint": "Write $z = \\dfrac{k}{w}$, find $k$, then substitute.", "correctExplanation": "$z = \\dfrac{k}{w}$. From $w=4, z=6$: $k = 24$. So $z = \\dfrac{24}{8} = 3$.", "wrongExplanation": "Inverse variation: $zw = k = 24$. When $w = 8$, $z = 24/8 = 3$."}, {"question": "Section B Q9 — Matrix: If $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$ and $B = \\begin{pmatrix} 5 & 6 \\\\ 7 & 8 \\end{pmatrix}$, find $A + B$.", "options": ["$\\begin{pmatrix} 6 & 8 \\\\ 10 & 12 \\end{pmatrix}$", "$\\begin{pmatrix} 5 & 12 \\\\ 21 & 32 \\end{pmatrix}$", "$\\begin{pmatrix} 4 & 4 \\\\ 4 & 4 \\end{pmatrix}$", "$\\begin{pmatrix} 6 & 10 \\\\ 8 & 12 \\end{pmatrix}$"], "correctIndex": 0, "hint": "Add matrices entry-by-entry.", "correctExplanation": "$A + B = \\begin{pmatrix} 1+5 & 2+6 \\\\ 3+7 & 4+8 \\end{pmatrix} = \\begin{pmatrix} 6 & 8 \\\\ 10 & 12 \\end{pmatrix}$.", "wrongExplanation": "Add corresponding entries: top-left $1+5=6$, top-right $2+6=8$, bottom-left $3+7=10$, bottom-right $4+8=12$."}, {"question": "Section B Q10 — Financial management: A loan of RM10,000 is taken at $5\\%$ per annum simple interest for $3$ years. Find the total interest payable.", "options": ["RM500", "RM1,000", "RM1,500", "RM1,576"], "correctIndex": 2, "hint": "Simple interest: $I = PRT$ with $R$ as a decimal.", "correctExplanation": "$I = 10{,}000 \\times 0.05 \\times 3 = $ RM1,500.", "wrongExplanation": "Use $I = PRT$: $10{,}000 \\times 0.05 \\times 3 = $ RM1,500. (The RM1,576 option is compound interest — not asked here.)"}];
+        const totalQuestions = questions.length;
+        let currentQuestionIndex = 0;
+        let userAnswers = []; // Store user's answers {questionIndex, selectedIndex, isCorrect}
+        let isReviewMode = false;
+
+        function renderMath(target) {
+            if (!target || typeof renderMathInElement !== 'function') return;
+            renderMathInElement(target, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\(', right: '\)', display: false},
+                    {left: '\[', right: '\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function shuffleOptions() {
+            questions.forEach(q => {
+                if (!q.options || q.options.length < 2) return;
+                const correctOption = q.options[q.correctIndex];
+                for (let i = q.options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+                }
+                q.correctIndex = q.options.indexOf(correctOption);
+            });
+        }
+
+        function initQuiz() {
+            shuffleOptions();
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const quizContent = document.getElementById('quiz-content');
+            const question = questions[currentQuestionIndex];
+            const userAnswer = userAnswers[currentQuestionIndex];
+
+            const isAnswered = userAnswer !== undefined;
+
+            // Determine button states
+            const showPrevious = currentQuestionIndex > 0;
+            const showNext = isAnswered && currentQuestionIndex < totalQuestions - 1;
+            const showFinish = isAnswered && currentQuestionIndex === totalQuestions - 1 && !isReviewMode;
+            const showFinishReview = isReviewMode && currentQuestionIndex === totalQuestions - 1;
+            const showHint = !!question.hint;
+
+            let optionsHtml = '';
+            question.options.forEach((option, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, D
+
+                if (isAnswered) {
+                    if (index === question.correctIndex) {
+                        const correctExplain = question.correctExplanation || question.explanation || '';
+                        optionsHtml += `
+                            <div class="feedback-card correct show">
+                                <div class="feedback-answer">${letter}. ${option}</div>
+                                <div class="feedback-header correct">
+                                    <span class="feedback-icon">✓</span>
+                                    <span>Right answer</span>
+                                </div>
+                                <div class="feedback-text">${correctExplain}</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    if (!userAnswer.isCorrect && index === userAnswer.selectedIndex) {
+                        const wrongExplain = question.wrongExplanation || question.explanation || '';
+                        optionsHtml += `
+                            <div class="feedback-card wrong show">
+                                <div class="feedback-answer">${letter}. ${option}</div>
+                                <div class="feedback-header wrong">
+                                    <span class="feedback-icon">✕</span>
+                                    <span>Not quite</span>
+                                </div>
+                                <div class="feedback-text">${wrongExplain}</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    optionsHtml += `
+                        <div class="option disabled" data-index="${index}">
+                            <span class="option-label">${letter}.</span>
+                            <span class="option-text">${option}</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const optionClass = index === (userAnswer ? userAnswer.selectedIndex : -1) ? 'option selected' : 'option';
+                optionsHtml += `
+                    <div class="${optionClass}" onclick="selectAnswer(${index})" data-index="${index}">
+                        <span class="option-label">${letter}.</span>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `;
+            });
+
+            let hintHtml = '';
+            if (showHint) {
+                hintHtml = `
+                    <button class="hint-toggle" id="hint-toggle" onclick="toggleHint()">
+                        <span>Hint</span>
+                        <span class="chevron">⌃</span>
+                    </button>
+                    <div id="hint-panel" class="hint-panel">
+                        <div class="hint-title">Hint</div>
+                        <div class="hint-text">${question.hint}</div>
+                    </div>
+                `;
+            }
+
+            let buttonsHtml = `
+                <div class="quiz-footer">
+                    <div class="buttons">
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" onclick="previousQuestion()" ${showPrevious ? '' : 'disabled'}>
+                                Previous
+                            </button>
+                        </div>
+                        <div>
+                            ${showNext ? '<button class="btn btn-primary" onclick="nextQuestion()">Next</button>' : ''}
+                            ${showFinish ? '<button class="btn btn-primary" onclick="finishQuiz()">Finish Quiz</button>' : ''}
+                            ${showFinishReview ? '<button class="btn btn-primary" onclick="finishReview()">Finish Review</button>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            quizContent.innerHTML = `
+                <div class="progress-text">${currentQuestionIndex + 1} / ${totalQuestions}</div>
+                <div class="question-text">${question.question}</div>
+                <div class="options">
+                    ${optionsHtml}
+                </div>
+                <div class="hint-slot">
+                    ${hintHtml}
+                </div>
+                ${buttonsHtml}
+            `;
+            renderMath(quizContent);
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === question.correctIndex;
+
+            // Store the answer
+            userAnswers[currentQuestionIndex] = {
+                questionIndex: currentQuestionIndex,
+                selectedIndex: selectedIndex,
+                isCorrect: isCorrect
+            };
+
+            // Re-render to show feedback
+            renderQuestion();
+        }
+
+        function toggleHint() {
+            const hintPanel = document.getElementById('hint-panel');
+            const hintToggle = document.getElementById('hint-toggle');
+            if (hintPanel) {
+                hintPanel.classList.toggle('show');
+            }
+            if (hintToggle) {
+                hintToggle.classList.toggle('open');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            showCompletionScreen();
+        }
+
+        function showCompletionScreen() {
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            // Calculate stats
+            const answeredQuestions = userAnswers.filter(a => a !== undefined);
+            const correctAnswers = userAnswers.filter(a => a && a.isCorrect).length;
+            const wrongAnswers = userAnswers.filter(a => a && !a.isCorrect).length;
+            const skipped = totalQuestions - answeredQuestions.length;
+            const accuracy = answeredQuestions.length > 0
+                ? Math.round((correctAnswers / answeredQuestions.length) * 100)
+                : 0;
+
+            // Update stats
+            document.getElementById('score-value').textContent = `${correctAnswers}/${totalQuestions}`;
+            document.getElementById('accuracy-value').textContent = `${accuracy}%`;
+            document.getElementById('right-value').textContent = correctAnswers;
+            document.getElementById('wrong-value').textContent = wrongAnswers;
+            document.getElementById('skipped-value').textContent = skipped;
+
+            renderWeakAreas();
+            renderWrongAnswers();
+
+            // Show completion screen
+            quizContent.style.display = 'none';
+            completionScreen.classList.add('show');
+        }
+
+        function escapeHtml(str) {
+            if (str === undefined || str === null) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderWeakAreas() {
+            const section = document.getElementById('weak-areas-section');
+            const grid = document.getElementById('weak-areas-grid');
+
+            const topicCounts = {};
+            userAnswers.forEach((ans, i) => {
+                if (ans && !ans.isCorrect) {
+                    const topic = questions[i].topic || 'Untagged';
+                    topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+                }
+            });
+
+            const topics = Object.keys(topicCounts);
+            if (topics.length === 0 || (topics.length === 1 && topics[0] === 'Untagged')) {
+                section.classList.remove('show');
+                grid.innerHTML = '';
+                return;
+            }
+
+            topics.sort((a, b) => topicCounts[b] - topicCounts[a]);
+
+            grid.innerHTML = topics.map(topic => `
+                <div class="weak-area-card">
+                    <div class="weak-area-name">${escapeHtml(topic)}</div>
+                    <div class="weak-area-count">${topicCounts[topic]} wrong</div>
+                </div>
+            `).join('');
+
+            section.classList.add('show');
+        }
+
+        function renderWrongAnswers() {
+            const section = document.getElementById('wrong-answers-section');
+            const list = document.getElementById('wrong-answers-list');
+
+            const wrongs = [];
+            userAnswers.forEach((ans, i) => {
+                if (ans && !ans.isCorrect) {
+                    wrongs.push({ index: i, answer: ans });
+                }
+            });
+
+            if (wrongs.length === 0) {
+                section.classList.remove('show');
+                list.innerHTML = '';
+                return;
+            }
+
+            list.innerHTML = wrongs.map(({ index, answer }) => {
+                const q = questions[index];
+                const userLetter = String.fromCharCode(65 + answer.selectedIndex);
+                const correctLetter = String.fromCharCode(65 + q.correctIndex);
+                const userOption = q.options[answer.selectedIndex];
+                const correctOption = q.options[q.correctIndex];
+                const explanation = q.wrongExplanation || q.correctExplanation || q.explanation || '';
+                const topicTag = q.topic ? `<div class="wrong-answer-topic">${escapeHtml(q.topic)}</div>` : '';
+
+                return `
+                    <div class="wrong-answer-card">
+                        ${topicTag}
+                        <div class="wrong-answer-question">Q${index + 1}. ${escapeHtml(q.question)}</div>
+                        <div class="wrong-answer-row">
+                            <span class="wrong-answer-label">Your answer:</span>
+                            <span class="wrong-answer-user">${userLetter}. ${escapeHtml(userOption)}</span>
+                        </div>
+                        <div class="wrong-answer-row">
+                            <span class="wrong-answer-label">Correct answer:</span>
+                            <span class="wrong-answer-correct">${correctLetter}. ${escapeHtml(correctOption)}</span>
+                        </div>
+                        ${explanation ? `<div class="wrong-answer-explanation">${escapeHtml(explanation)}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            section.classList.add('show');
+            renderMath(list);
+        }
+
+        function reviewQuiz() {
+            isReviewMode = true;
+            currentQuestionIndex = 0;
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            quizContent.style.display = 'block';
+            completionScreen.classList.remove('show');
+            renderQuestion();
+        }
+
+        function finishReview() {
+            showCompletionScreen();
+        }
+
+        function retakeQuiz() {
+            isReviewMode = false;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            shuffleOptions();
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            quizContent.style.display = 'block';
+            completionScreen.classList.remove('show');
+            renderQuestion();
+        }
+
+        // Initialize quiz on page load
+        initQuiz();
+    </script>
+</body>
+</html>
